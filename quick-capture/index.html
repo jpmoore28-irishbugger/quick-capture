@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Capture</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Quick Capture</h1>
+      <div class="header-actions">
+        <div class="views">
+          <button class="view-btn active" data-view="today">Today</button>
+          <button class="view-btn" data-view="all">All</button>
+        </div>
+        <div class="data-actions">
+          <button id="export-btn" type="button" title="Export as JSON">Export</button>
+          <button id="import-btn" type="button" title="Import from JSON">Import</button>
+          <input id="import-file" type="file" accept="application/json,.json" hidden />
+        </div>
+      </div>
+    </header>
+
+    <form id="capture-form" autocomplete="off">
+      <input
+        id="capture-input"
+        type="text"
+        placeholder="Capture a thought… (try #tags)"
+        autofocus
+      />
+    </form>
+
+    <div id="tag-bar" class="tag-bar"></div>
+
+    <ul id="item-list" class="item-list"></ul>
+
+    <p id="empty-state" class="empty-state" hidden>Nothing here yet. Type above and hit Enter.</p>
+
+    <footer>
+      <span><kbd>/</kbd> focus input</span>
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>Enter</kbd> toggle done</span>
+      <span><kbd>e</kbd> edit</span>
+      <span><kbd>⌫</kbd> delete</span>
+      <span>drag <kbd>⋮⋮</kbd> to reorder</span>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
