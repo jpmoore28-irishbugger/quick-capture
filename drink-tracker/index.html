@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drink Tracker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Drink Tracker</h1>
+      <div class="header-actions">
+        <button id="limit-badge" class="limit-badge" type="button" title="Click to change your weekly limit">
+          Limit: <span id="limit-value">7</span>/wk
+        </button>
+        <div class="data-actions">
+          <button id="export-btn" type="button" title="Export as JSON">Export</button>
+          <button id="import-btn" type="button" title="Import from JSON">Import</button>
+          <input id="import-file" type="file" accept="application/json,.json" hidden />
+        </div>
+      </div>
+    </header>
+
+    <div class="progress-card">
+      <div class="progress-count">
+        <span id="week-count">0</span>
+        <span class="of">of <span id="week-limit">7</span> this week</span>
+      </div>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      <div id="progress-message" class="progress-message"></div>
+    </div>
+
+    <div class="actions-row">
+      <button id="log-btn" class="log-btn" type="button">+1 Drink</button>
+      <button id="undo-btn" class="undo-btn" type="button" disabled>Undo last</button>
+    </div>
+
+    <div class="views">
+      <button class="view-btn active" data-view="week">This Week</button>
+      <button class="view-btn" data-view="all">All</button>
+    </div>
+
+    <div id="log-list" class="log-list"></div>
+
+    <p id="empty-state" class="empty-state" hidden>No drinks logged yet.</p>
+
+    <footer>
+      <span>Week starts <strong>Monday</strong></span>
+      <span><kbd>d</kbd> log a drink</span>
+      <span><kbd>u</kbd> undo last</span>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
