@@ -13,8 +13,10 @@ browser window). That's it.
 
 - Set your **weekly limit** by clicking the "Limit: 7/wk" badge in the
   top-right and typing a new number.
-- Tap **+1 Drink** every time you have one. The progress bar and count
-  update instantly.
+- Tap **+1 Drink** every time you have one, or **+0.5** for a half
+  (a small pour, a shared bottle, etc.). The progress bar and count
+  update instantly. Both the limit and your logged amounts support
+  decimals (e.g. a limit of 10.5, or a 0.5 entry).
 - Made a mistake? Tap **Undo last** to remove the most recent entry, or
   find any entry in the list below and click its **×** to delete it.
 - The week runs **Monday–Sunday**. The progress bar turns amber near your
@@ -30,6 +32,7 @@ browser window). That's it.
 | Key | Action |
 |---|---|
 | `d` | Log a drink |
+| `h` | Log half a drink |
 | `u` | Undo the last logged drink |
 
 ## Data

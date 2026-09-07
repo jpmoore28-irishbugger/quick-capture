@@ -18,6 +18,7 @@
   const progressBar = progressFill.parentElement;
   const progressMessage = document.getElementById("progress-message");
   const logBtn = document.getElementById("log-btn");
+  const logHalfBtn = document.getElementById("log-half-btn");
   const undoBtn = document.getElementById("undo-btn");
   const viewBtns = document.querySelectorAll(".view-btn");
   const logList = document.getElementById("log-list");
@@ -46,11 +47,22 @@
   function loadLimit() {
     try {
       const raw = localStorage.getItem(LIMIT_KEY);
-      const n = raw ? parseInt(raw, 10) : DEFAULT_LIMIT;
+      const n = raw ? parseFloat(raw) : DEFAULT_LIMIT;
       return Number.isFinite(n) && n > 0 ? n : DEFAULT_LIMIT;
     } catch {
       return DEFAULT_LIMIT;
     }
+  }
+
+  // Round to 1 decimal place, avoiding float artifacts like 7.30000000000001
+  function round1(n) {
+    return Math.round(n * 10) / 10;
+  }
+
+  // "7" for whole numbers, "7.5" for fractional ones
+  function fmtNum(n) {
+    const r = round1(n);
+    return Number.isInteger(r) ? String(r) : r.toFixed(1);
   }
 
   function saveLimit() {
@@ -83,6 +95,14 @@
     return entries.filter((e) => e.ts >= start && e.ts < end);
   }
 
+  function amountOf(entry) {
+    return typeof entry.amount === "number" && entry.amount > 0 ? entry.amount : 1;
+  }
+
+  function sumAmounts(list) {
+    return round1(list.reduce((sum, e) => sum + amountOf(e), 0));
+  }
+
   function fmtTime(ts) {
     return new Date(ts).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   }
@@ -104,8 +124,12 @@
   }
 
   // --- actions ---
-  function logDrink() {
-    entries.push({ id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()), ts: Date.now() });
+  function logDrink(amount = 1) {
+    entries.push({
+      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+      ts: Date.now(),
+      amount,
+    });
     saveEntries();
     render();
   }
@@ -127,7 +151,7 @@
 
   function setLimit(n) {
     if (Number.isFinite(n) && n > 0) {
-      weeklyLimit = Math.round(n);
+      weeklyLimit = round1(n);
       saveLimit();
     }
     render();
@@ -136,13 +160,13 @@
   // --- rendering ---
   function renderProgress() {
     const weekEntries = currentWeekEntries();
-    const count = weekEntries.length;
+    const count = sumAmounts(weekEntries);
     const ratio = count / weeklyLimit;
 
-    weekCountEl.textContent = String(count);
-    weekLimitEl.textContent = String(weeklyLimit);
+    weekCountEl.textContent = fmtNum(count);
+    weekLimitEl.textContent = fmtNum(weeklyLimit);
     if (!editingLimit) {
-      limitBadge.innerHTML = `Limit: <span id="limit-value">${weeklyLimit}</span>/wk`;
+      limitBadge.innerHTML = `Limit: <span id="limit-value">${fmtNum(weeklyLimit)}</span>/wk`;
     }
 
     progressFill.style.width = `${Math.min(100, ratio * 100)}%`;
@@ -160,13 +184,13 @@
     }
 
     if (count >= weeklyLimit) {
-      const over = count - weeklyLimit;
+      const over = round1(count - weeklyLimit);
       progressMessage.textContent = over > 0
-        ? `${over} over your limit this week`
+        ? `${fmtNum(over)} over your limit this week`
         : "At your limit for this week";
     } else {
-      const left = weeklyLimit - count;
-      progressMessage.textContent = `${left} left this week`;
+      const left = round1(weeklyLimit - count);
+      progressMessage.textContent = `${fmtNum(left)} left this week`;
     }
 
     undoBtn.disabled = entries.length === 0;
@@ -204,7 +228,7 @@
       const dayEntries = groups.get(dayKey);
       const group = document.createElement("div");
       group.className = "day-group";
-      group.innerHTML = `<div class="group-header"><span>${fmtDay(dayKey)}</span><span class="group-count">${dayEntries.length}</span></div>`;
+      group.innerHTML = `<div class="group-header"><span>${fmtDay(dayKey)}</span><span class="group-count">${fmtNum(sumAmounts(dayEntries))}</span></div>`;
       dayEntries.forEach((e) => group.appendChild(renderEntry(e)));
       logList.appendChild(group);
     });
@@ -222,17 +246,19 @@
       const weekEntries = groups.get(weekKey);
       const group = document.createElement("div");
       group.className = "week-group";
-      group.innerHTML = `<div class="group-header"><span>${fmtWeekRange(weekKey)}</span><span class="group-count">${weekEntries.length}/${weeklyLimit}</span></div>`;
+      group.innerHTML = `<div class="group-header"><span>${fmtWeekRange(weekKey)}</span><span class="group-count">${fmtNum(sumAmounts(weekEntries))}/${fmtNum(weeklyLimit)}</span></div>`;
       weekEntries.forEach((e) => group.appendChild(renderEntry(e)));
       logList.appendChild(group);
     });
   }
 
   function renderEntry(entry) {
+    const amount = amountOf(entry);
     const row = document.createElement("div");
     row.className = "entry";
     row.innerHTML = `
       <span class="entry-time">${fmtDay(entry.ts)} · ${fmtTime(entry.ts)}</span>
+      <span class="entry-amount">${fmtNum(amount)} ${amount === 1 ? "drink" : "drinks"}</span>
       <button class="del" title="Delete" aria-label="Delete">×</button>
     `;
     row.querySelector(".del").addEventListener("click", () => deleteEntry(entry.id));
@@ -250,8 +276,9 @@
     editingLimit = true;
     const input = document.createElement("input");
     input.type = "number";
-    input.min = "1";
-    input.value = String(weeklyLimit);
+    input.min = "0.5";
+    input.step = "0.5";
+    input.value = fmtNum(weeklyLimit);
     limitBadge.textContent = "";
     limitBadge.append("Limit: ", input, "/wk");
     input.focus();
@@ -262,7 +289,7 @@
       if (done) return;
       done = true;
       editingLimit = false;
-      setLimit(parseInt(input.value, 10));
+      setLimit(parseFloat(input.value));
     };
     input.addEventListener("click", (e) => e.stopPropagation());
     input.addEventListener("keydown", (e) => {
@@ -279,7 +306,8 @@
   });
 
   // --- buttons ---
-  logBtn.addEventListener("click", logDrink);
+  logBtn.addEventListener("click", () => logDrink(1));
+  logHalfBtn.addEventListener("click", () => logDrink(0.5));
   undoBtn.addEventListener("click", undoLast);
 
   viewBtns.forEach((btn) => {
@@ -322,6 +350,7 @@
         .map((x) => ({
           id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
           ts: x.ts,
+          amount: typeof x.amount === "number" && x.amount > 0 ? x.amount : 1,
         }));
 
       if (valid.length === 0) {
@@ -330,7 +359,7 @@
       }
       entries = entries.concat(valid);
       if (!Array.isArray(parsed) && Number.isFinite(parsed.weeklyLimit) && parsed.weeklyLimit > 0) {
-        weeklyLimit = Math.round(parsed.weeklyLimit);
+        weeklyLimit = round1(parsed.weeklyLimit);
         saveLimit();
       }
       saveEntries();
@@ -350,7 +379,10 @@
 
     if (e.key === "d") {
       e.preventDefault();
-      logDrink();
+      logDrink(1);
+    } else if (e.key === "h") {
+      e.preventDefault();
+      logDrink(0.5);
     } else if (e.key === "u") {
       e.preventDefault();
       undoLast();

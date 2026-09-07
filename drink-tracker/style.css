@@ -197,6 +197,17 @@ h1 {
 .log-btn:hover { opacity: 0.92; }
 .log-btn:active { transform: scale(0.97); }
 
+.log-btn.secondary {
+  flex: 0 0 auto;
+  background: var(--surface);
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+  box-shadow: none;
+  padding: 18px 16px;
+}
+
+.log-btn.secondary:hover { opacity: 1; background: var(--accent-soft); }
+
 .undo-btn {
   flex: 0 0 auto;
   border: 1px solid var(--border);
@@ -275,7 +286,7 @@ h1 {
 .entry {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 10px;
   padding: 10px 14px;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -283,7 +294,14 @@ h1 {
 }
 
 .entry .entry-time {
+  flex: 1;
   font-size: 0.9rem;
+}
+
+.entry .entry-amount {
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  color: var(--text-dim);
 }
 
 .entry .del {
