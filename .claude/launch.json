@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "quick-capture",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", "-l", "8765", "quick-capture"],
+      "port": 8765
+    },
+    {
+      "name": "drink-tracker",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", "-l", "8766", "drink-tracker"],
+      "port": 8766
+    }
+  ]
+}
