@@ -1,4 +1,4 @@
-name: Deploy quick-capture to GitHub Pages
+name: Deploy apps to GitHub Pages
 
 on:
   push:
@@ -22,8 +22,14 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Assemble site
+        run: |
+          mkdir -p dist
+          cp -r site/. dist/
+          cp -r quick-capture dist/quick-capture
+          cp -r drink-tracker dist/drink-tracker
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: quick-capture
+          path: dist
       - id: deployment
         uses: actions/deploy-pages@v4

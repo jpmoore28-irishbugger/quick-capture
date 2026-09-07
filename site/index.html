@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Apps</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fafaf9;
+    --surface: #ffffff;
+    --border: #e5e3df;
+    --text: #1c1b1a;
+    --text-dim: #7a7772;
+    --accent: #d9622b;
+    --accent-soft: #fdece2;
+    --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161513;
+      --surface: #211f1c;
+      --border: #34312c;
+      --text: #efece6;
+      --text-dim: #94908a;
+      --accent: #e88752;
+      --accent-soft: #3a2a20;
+      --shadow: 0 1px 2px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.25);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 48px 20px;
+  }
+  .page { width: 100%; max-width: 480px; }
+  h1 { font-size: 1.4rem; font-weight: 650; margin: 0 0 20px; letter-spacing: -0.01em; }
+  .app-list { display: flex; flex-direction: column; gap: 12px; }
+  a.app-card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.15s;
+  }
+  a.app-card:hover { border-color: var(--accent); }
+  .app-name { font-size: 1.05rem; font-weight: 650; margin-bottom: 4px; }
+  .app-desc { font-size: 0.88rem; color: var(--text-dim); }
+</style>
+</head>
+<body>
+  <div class="page">
+    <h1>My Apps</h1>
+    <div class="app-list">
+      <a class="app-card" href="quick-capture/">
+        <div class="app-name">Quick Capture</div>
+        <div class="app-desc">A fast, keyboard-first capture tool for tasks and notes.</div>
+      </a>
+      <a class="app-card" href="drink-tracker/">
+        <div class="app-name">Drink Tracker</div>
+        <div class="app-desc">Track drinks against a weekly limit you set.</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>
